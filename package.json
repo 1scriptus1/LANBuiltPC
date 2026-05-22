@@ -1,0 +1,26 @@
+{
+  "name": "lanbuiltpc",
+  "version": "1.0.0",
+  "description": "LANBuiltPC is a software that allows you to control all of your servers or computers through node js. At least control it at the least. Basically a chrome remote desktop but just universally",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1scriptus1/LANBuiltPC.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/1scriptus1/LANBuiltPC/issues"
+  },
+  "homepage": "https://github.com/1scriptus1/LANBuiltPC#readme",
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
+    "express": "^5.2.1",
+    "ws": "^8.20.1"
+  }
+}

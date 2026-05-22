@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remote Control</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+        }
+
+        canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<canvas id="screen"></canvas>
+
+<script>
+
+const canvas = document.getElementById("screen");
+
+const ws = new WebSocket(
+    `ws://${location.host}`
+);
+
+let mouseDown = false;
+
+canvas.addEventListener("mousemove", (e) => {
+
+    const rect = canvas.getBoundingClientRect();
+
+    const x =
+        (e.clientX / rect.width) * screen.width;
+
+    const y =
+        (e.clientY / rect.height) * screen.height;
+
+    ws.send(JSON.stringify({
+
+        type: "mousemove",
+        x,
+        y
+
+    }));
+
+});
+
+canvas.addEventListener("mousedown", () => {
+
+    ws.send(JSON.stringify({
+
+        type: "mousedown"
+
+    }));
+
+});
+
+canvas.addEventListener("mouseup", () => {
+
+    ws.send(JSON.stringify({
+
+        type: "mouseup"
+
+    }));
+
+});
+
+document.addEventListener("keydown", (e) => {
+
+    ws.send(JSON.stringify({
+
+        type: "keydown",
+        key: e.key
+
+    }));
+
+});
+
+document.addEventListener("keyup", (e) => {
+
+    ws.send(JSON.stringify({
+
+        type: "keyup",
+        key: e.key
+
+    }));
+
+});
+
+</script>
+
+</body>
+</html>
