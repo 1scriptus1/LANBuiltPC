@@ -4,7 +4,9 @@
   "description": "LANBuiltPC is a software that allows you to control all of your servers or computers through node js. At least control it at the least. Basically a chrome remote desktop but just universally",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "install": "npm install express ws screenshot-desktop @nut-tree-fork/nut-js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   "dependencies": {
     "@nut-tree-fork/nut-js": "^4.2.6",
     "express": "^5.2.1",
+    "screenshot-desktop": "^1.15.4",
     "ws": "^8.20.1"
   }
 }

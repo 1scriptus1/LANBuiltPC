@@ -4,7 +4,6 @@
     <title>Remote Control</title>
 
     <style>
-
         body {
             margin: 0;
             overflow: hidden;
@@ -17,84 +16,104 @@
             display: block;
         }
 
-    </style>
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
 
+        button {
+            padding: 8px;
+            margin-right: 5px;
+        }
+    </style>
 </head>
+
 <body>
 
-<canvas id="screen"></canvas>
+<div id="controls">
+    <button onclick="switchScreen(0)">Screen 1</button>
+    <button onclick="switchScreen(1)">Screen 2</button>
+</div>
+
+<canvas id="screen" tabindex="0"></canvas>
 
 <script>
 
 const canvas = document.getElementById("screen");
+const ctx = canvas.getContext("2d");
 
-const ws = new WebSocket(
-    `ws://${location.host}`
-);
+const ws = new WebSocket(`wss://${location.host}`);
 
-let mouseDown = false;
+canvas.focus();
+
+// ===== SCREEN RENDER =====
+ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "screen") {
+        const img = new Image();
+        img.src = "data:image/png;base64," + data.image;
+
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+        };
+    }
+};
+
+// ===== INPUT =====
+function send(obj) {
+    if (ws.readyState === 1) {
+        ws.send(JSON.stringify(obj));
+    }
+}
 
 canvas.addEventListener("mousemove", (e) => {
-
     const rect = canvas.getBoundingClientRect();
 
-    const x =
-        (e.clientX / rect.width) * screen.width;
-
-    const y =
-        (e.clientY / rect.height) * screen.height;
-
-    ws.send(JSON.stringify({
-
+    send({
         type: "mousemove",
-        x,
-        y
-
-    }));
-
+        x: (e.clientX / rect.width) * canvas.width,
+        y: (e.clientY / rect.height) * canvas.height
+    });
 });
 
 canvas.addEventListener("mousedown", () => {
-
-    ws.send(JSON.stringify({
-
-        type: "mousedown"
-
-    }));
-
+    send({ type: "mousedown" });
 });
 
 canvas.addEventListener("mouseup", () => {
-
-    ws.send(JSON.stringify({
-
-        type: "mouseup"
-
-    }));
-
+    send({ type: "mouseup" });
 });
 
 document.addEventListener("keydown", (e) => {
+    e.preventDefault();
 
-    ws.send(JSON.stringify({
-
+    send({
         type: "keydown",
         key: e.key
-
-    }));
-
-});
+    });
+}, true);
 
 document.addEventListener("keyup", (e) => {
+    e.preventDefault();
 
-    ws.send(JSON.stringify({
-
+    send({
         type: "keyup",
         key: e.key
+    });
+}, true);
 
-    }));
-
-});
+// ===== MULTI MONITOR SWITCH =====
+function switchScreen(index) {
+    send({
+        type: "switchScreen",
+        index
+    });
+}
 
 </script>
 
